@@ -3,35 +3,43 @@ import { Tooltip } from "antd";
 import "./App.css";
 import TurkeyMap from "turkey-map-react";
 import { ReactComponent as Logo } from "./assets/logo.svg";
+import { fetchPaymentData, startPaymentGeneration } from "./paymentService";
 
 function App() {
   const [highlightedCityIndex, setHighlightedCityIndex] = useState(0);
   const [paymentData, setPaymentData] = useState([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
-    const fetchPaymentData = async () => {
-      const response = await fetch("http://localhost:8080/api/payment-data");
-      const data = await response.json();
-      setPaymentData(data);
+
+
+    const getData = async () => {
+      try {
+        const data = await fetchPaymentData();
+        setPaymentData(data);
+      } catch (error) {
+        console.error("Error fetching payment data:", error);
+      }
     };
-
-    fetchPaymentData();
-
+    getData();
     const interval = setInterval(() => {
-      setHighlightedCityIndex(
-        (prevIndex) => (prevIndex + 1) % paymentData.length
-      );
+      if (paymentData.length > 0) {
+        setHighlightedCityIndex(
+          (prevIndex) => (prevIndex + 1) % paymentData.length
+        );
+      }
     }, 2000);
-
-    console.log("index ", highlightedCityIndex);
 
     return () => clearInterval(interval);
   }, [paymentData.length]);
 
+
+
   const renderCity = (cityComponent, cityData) => {
+    console.log("paymentData: ", paymentData)
     const paymentInfo = paymentData.find((data) => data.city === cityData.name);
     const isHighlighted =
-      paymentInfo && paymentData[highlightedCityIndex].city === cityData.name;
+      paymentInfo && paymentData[highlightedCityIndex]?.city === cityData.name;
 
     return (
       <Tooltip
@@ -60,6 +68,7 @@ function App() {
   return (
     <div className="App">
       <Logo className="logo" />
+
       <TurkeyMap cityWrapper={renderCity} />
     </div>
   );
