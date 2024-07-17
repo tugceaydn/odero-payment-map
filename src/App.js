@@ -4,35 +4,34 @@ import "./App.css";
 import TurkeyMap from "turkey-map-react";
 import { ReactComponent as Logo } from "./assets/logo.svg";
 
-const payment_data = [
-  { city: "İzmir", amount: 10 },
-  { city: "İstanbul", amount: 100 },
-  { city: "Malatya", amount: 3 },
-  { city: "Adana", amount: 45 },
-  { city: "Konya", amount: 1 },
-];
-
 function App() {
   const [highlightedCityIndex, setHighlightedCityIndex] = useState(0);
+  const [paymentData, setPaymentData] = useState([]);
 
   useEffect(() => {
+    const fetchPaymentData = async () => {
+      const response = await fetch("http://localhost:8080/api/payment-data");
+      const data = await response.json();
+      setPaymentData(data);
+    };
+
+    fetchPaymentData();
+
     const interval = setInterval(() => {
       setHighlightedCityIndex(
-        (prevIndex) => (prevIndex + 1) % payment_data.length
+        (prevIndex) => (prevIndex + 1) % paymentData.length
       );
     }, 2000);
 
+    console.log("index ", highlightedCityIndex);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [paymentData.length]);
 
   const renderCity = (cityComponent, cityData) => {
-    const paymentInfo = payment_data.find(
-      (data) => data.city === cityData.name
-    );
+    const paymentInfo = paymentData.find((data) => data.city === cityData.name);
     const isHighlighted =
-      paymentInfo && payment_data[highlightedCityIndex].city === cityData.name;
-
-    console.log("city ", cityData.name, "highlight ", isHighlighted);
+      paymentInfo && paymentData[highlightedCityIndex].city === cityData.name;
 
     return (
       <Tooltip
