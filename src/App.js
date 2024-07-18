@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+import OderoMap from "../src/components/map/OderoMap";
 
 function App() {
-  const [dataQueue, setDataQueue] = useState([]);
+  const [aggregatedDataArray, setAggregatedDataArray] = useState([]);
+  const dataMap = useRef(new Map());
   const ws = useRef(null);
 
   useEffect(() => {
@@ -14,7 +16,13 @@ function App() {
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("Received data:", data);
-      setDataQueue((prevQueue) => [...prevQueue, data]);
+
+      const { city, amount } = data;
+      if (dataMap.current.has(city)) {
+        dataMap.current.set(city, dataMap.current.get(city) + amount);
+      } else {
+        dataMap.current.set(city, amount);
+      }
     };
 
     ws.current.onclose = () => {
@@ -30,16 +38,28 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDataArray = [];
+      dataMap.current.forEach((amount, city) => {
+        newDataArray.push({ city, amount });
+      });
+
+      setAggregatedDataArray(newDataArray);
+      dataMap.current.clear();
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div>
-      <h1>WebSocket Data</h1>
-      <ul>
-        {dataQueue.map((data, index) => (
-          <li
-            key={index}
-          >{`${data.city}: ${data.amount} at ${data.timestamp}`}</li>
+      {/* <ul>
+        {aggregatedDataArray.map((e) => (
+          <li>{e.city}</li>
         ))}
-      </ul>
+      </ul> */}
+      <OderoMap data={aggregatedDataArray} />
     </div>
   );
 }
