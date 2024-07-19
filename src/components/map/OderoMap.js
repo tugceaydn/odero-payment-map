@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Tooltip } from "antd";
-import "../../App.css";
+import "./OderoMap.scss";
 import TurkeyMap from "turkey-map-react";
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 
 export default function OderoMap({ data }) {
-  console.log("data ", data);
-
   const [highlightedCities, setHighlightedCities] = useState({});
 
   useEffect(() => {
@@ -67,7 +65,7 @@ export default function OderoMap({ data }) {
   };
 
   return (
-    <div className="App">
+    <div className="map">
       <Logo className="logo" />
       <TurkeyMap cityWrapper={renderCity} />
     </div>
