@@ -1,8 +1,11 @@
+import HistoricalData from "./components/historical_data/HistoricalData";
+import OderoMap from "./components/map/OderoMap";
+
 import React, { useState, useEffect, useRef } from "react";
-import OderoMap from "../src/components/map/OderoMap";
 
 function App() {
   const [aggregatedDataArray, setAggregatedDataArray] = useState([]);
+  const [logData, setLogData] = useState(null);
   const dataMap = useRef(new Map());
   const ws = useRef(null);
 
@@ -15,7 +18,23 @@ function App() {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("Received data:", data);
+      // console.log("Received data:", data);
+
+      const {
+        lastDayPaymentSum,
+        lastOneHourPaymentSum,
+        paymentCounterDay,
+        paymentCounterHour,
+      } = data;
+
+      const newJsonData = {
+        lastDayPaymentSum,
+        lastOneHourPaymentSum,
+        paymentCounterDay,
+        paymentCounterHour,
+      };
+
+      setLogData(newJsonData);
 
       const { city, amount } = data;
       if (dataMap.current.has(city)) {
@@ -54,12 +73,8 @@ function App() {
 
   return (
     <div>
-      {/* <ul>
-        {aggregatedDataArray.map((e) => (
-          <li>{e.city}</li>
-        ))}
-      </ul> */}
       <OderoMap data={aggregatedDataArray} />
+      <HistoricalData logData={logData} />
     </div>
   );
 }
