@@ -4,9 +4,8 @@ import OderoMap from "./components/map/OderoMap";
 import React, { useState, useEffect, useRef } from "react";
 
 function App() {
-  const [aggregatedDataArray, setAggregatedDataArray] = useState([]);
+  const [paymentDataArray, setPaymentDataArray] = useState([]);
   const [logData, setLogData] = useState(null);
-  const dataMap = useRef(new Map());
   const ws = useRef(null);
 
   useEffect(() => {
@@ -37,11 +36,8 @@ function App() {
       setLogData(newJsonData);
 
       const { city, amount } = data;
-      if (dataMap.current.has(city)) {
-        dataMap.current.set(city, dataMap.current.get(city) + amount);
-      } else {
-        dataMap.current.set(city, amount);
-      }
+
+      setPaymentDataArray((prevArray) => [...prevArray, { city, amount }]);
     };
 
     ws.current.onclose = () => {
@@ -57,23 +53,18 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newDataArray = [];
-      dataMap.current.forEach((amount, city) => {
-        newDataArray.push({ city, amount });
-      });
-
-      setAggregatedDataArray(newDataArray);
-      dataMap.current.clear();
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+  const handleDataProcessed = (processedData) => {
+    setPaymentDataArray((prevData) =>
+      prevData.filter((data) => data !== processedData)
+    );
+  };
 
   return (
     <div>
-      <OderoMap data={aggregatedDataArray} />
+      <OderoMap
+        paymentData={paymentDataArray}
+        onProcessed={handleDataProcessed}
+      />
       <HistoricalData logData={logData} />
     </div>
   );

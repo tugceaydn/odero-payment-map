@@ -1,40 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Tooltip } from "antd";
 import "./OderoMap.scss";
 import TurkeyMap from "turkey-map-react";
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 
-export default function OderoMap({ data }) {
+export default function OderoMap({ paymentData, onProcessed }) {
   const [highlightedCities, setHighlightedCities] = useState({});
+  const timeouts = useRef(new Map());
 
   useEffect(() => {
-    if (data.length > 0) {
-      const newHighlights = {};
-      data.forEach((item) => {
-        newHighlights[item.city] = { amount: item.amount, timeout: null };
-      });
+    if (paymentData.length > 0) {
+      const newData = paymentData[0];
+      const { city, amount } = newData;
 
       setHighlightedCities((prev) => {
-        const updated = { ...prev, ...newHighlights };
+        const updated = { ...prev, [city]: { amount, timeout: null } };
 
-        Object.keys(newHighlights).forEach((city) => {
-          if (updated[city].timeout) {
-            clearTimeout(updated[city].timeout);
-          }
+        if (timeouts.current.has(city)) {
+          clearTimeout(timeouts.current.get(city));
+        }
 
-          updated[city].timeout = setTimeout(() => {
-            setHighlightedCities((current) => {
-              const updatedCurrent = { ...current };
-              delete updatedCurrent[city];
-              return updatedCurrent;
-            });
-          }, 2000); // Highlight for 2 seconds
-        });
+        const timeout = setTimeout(() => {
+          setHighlightedCities((current) => {
+            const updatedCurrent = { ...current };
+            delete updatedCurrent[city];
+            return updatedCurrent;
+          });
+          timeouts.current.delete(city);
+        }, 2000); // Highlight for 2 seconds
+
+        timeouts.current.set(city, timeout);
 
         return updated;
       });
+
+      onProcessed(newData);
     }
-  }, [data]);
+  }, [paymentData, onProcessed]);
 
   const renderCity = (cityComponent, cityData) => {
     const isHighlighted = highlightedCities.hasOwnProperty(cityData.name);
