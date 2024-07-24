@@ -5,42 +5,44 @@ import TurkeyMap from "turkey-map-react";
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 
 export default function OderoMap({ paymentData, onProcessed }) {
-  const [highlightedCities, setHighlightedCities] = useState({});
+  const [highlightedCities, setHighlightedCities] = useState(new Map());
   const timeouts = useRef(new Map());
 
   useEffect(() => {
-    if (paymentData.length > 0) {
-      const newData = paymentData[0];
-      const { city, amount } = newData;
+    paymentData.forEach((data, id) => {
+      const { city, amount } = data;
 
       setHighlightedCities((prev) => {
-        const updated = { ...prev, [city]: { amount, timeout: null } };
+        const updated = new Map(prev);
+        updated.set(id, { city, amount, timeout: null });
 
-        if (timeouts.current.has(city)) {
-          clearTimeout(timeouts.current.get(city));
+        if (timeouts.current.has(id)) {
+          clearTimeout(timeouts.current.get(id));
         }
 
         const timeout = setTimeout(() => {
           setHighlightedCities((current) => {
-            const updatedCurrent = { ...current };
-            delete updatedCurrent[city];
+            const updatedCurrent = new Map(current);
+            updatedCurrent.delete(id);
             return updatedCurrent;
           });
-          timeouts.current.delete(city);
+          timeouts.current.delete(id);
         }, 2000); // Highlight for 2 seconds
 
-        timeouts.current.set(city, timeout);
+        timeouts.current.set(id, timeout);
 
         return updated;
       });
 
-      onProcessed(newData);
-    }
+      onProcessed(id);
+    });
   }, [paymentData, onProcessed]);
 
   const renderCity = (cityComponent, cityData) => {
-    const isHighlighted = highlightedCities.hasOwnProperty(cityData.name);
-    const paymentInfo = isHighlighted ? highlightedCities[cityData.name] : null;
+    const highlightedEntry = Array.from(highlightedCities.values()).find(
+      (entry) => entry.city === cityData.name
+    );
+    const paymentInfo = highlightedEntry ? highlightedEntry : null;
 
     return (
       <Tooltip
@@ -48,17 +50,17 @@ export default function OderoMap({ paymentData, onProcessed }) {
           <div className="tooltip-title">
             {cityData.name}
             <br />
-            {paymentInfo ? `${paymentInfo.amount}₺` : ""}
+            {paymentInfo ? `${paymentInfo.amount.toFixed(2)} ₺` : ""}
           </div>
         }
         key={cityData.id}
         color="#2c2e2c"
-        open={isHighlighted}
+        open={!!paymentInfo}
       >
         {React.cloneElement(cityComponent.props.children, {
           style: {
             ...cityComponent.props.children.props.style,
-            fill: isHighlighted ? "#6CD14E" : "#aaaaac",
+            fill: paymentInfo ? "#6CD14E" : "#aaaaac",
             transition: "fill 0.5s",
           },
         })}
