@@ -2,9 +2,10 @@ import HistoricalData from "./components/historical_data/HistoricalData";
 import OderoMap from "./components/map/OderoMap";
 
 import React, { useState, useEffect, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
-  const [paymentDataArray, setPaymentDataArray] = useState([]);
+  const [paymentDataMap, setPaymentDataMap] = useState(new Map());
   const [logData, setLogData] = useState(null);
   const ws = useRef(null);
 
@@ -37,7 +38,13 @@ function App() {
 
       const { city, amount } = data;
 
-      setPaymentDataArray((prevArray) => [...prevArray, { city, amount }]);
+      const id = uuidv4();
+
+      setPaymentDataMap((prevMap) => {
+        const newMap = new Map(prevMap);
+        newMap.set(id, { id, city, amount });
+        return newMap;
+      });
     };
 
     ws.current.onclose = () => {
@@ -53,16 +60,18 @@ function App() {
     };
   }, []);
 
-  const handleDataProcessed = (processedData) => {
-    setPaymentDataArray((prevData) =>
-      prevData.filter((data) => data !== processedData)
-    );
+  const handleDataProcessed = (id) => {
+    setPaymentDataMap((prevMap) => {
+      const newMap = new Map(prevMap);
+      newMap.delete(id);
+      return newMap;
+    });
   };
 
   return (
     <div>
       <OderoMap
-        paymentData={paymentDataArray}
+        paymentData={paymentDataMap}
         onProcessed={handleDataProcessed}
       />
       <HistoricalData logData={logData} />
