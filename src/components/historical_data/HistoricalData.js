@@ -1,10 +1,27 @@
 import React from "react";
 import "./HistoricalData.scss";
+import { Card, CardContent, Typography } from "@mui/material";
+
+const PaymentCard = ({ title, paymentSum, transactionCount }) => (
+  <Card variant="outlined" sx={{ minWidth: 275 }}>
+    <CardContent>
+      <Typography variant="h6" component="div" sx={{ mb: 1.5 }}>
+        {title}
+      </Typography>
+      <Typography variant="body1" color="text.secondary">
+        Payment Sum: {paymentSum ? `${paymentSum.toFixed(2)} ₺` : ""}
+      </Typography>
+      <Typography variant="body1" color="text.secondary">
+        Number of Transactions: {transactionCount}
+      </Typography>
+    </CardContent>
+  </Card>
+);
 
 export default function HistoricalData({ logData }) {
   return (
     <div className="historicalData">
-      <div className="lastHour">
+      {/* <div className="lastHour">
         <h3>Last Hour Payment Data</h3>
         <p>
           Payment Sum:{" "}
@@ -23,7 +40,17 @@ export default function HistoricalData({ logData }) {
         <p>
           Number of Transactions: {logData ? logData.paymentCounterDay : ""}
         </p>
-      </div>
+      </div> */}
+      <PaymentCard
+        title="Last Hour Payment Data"
+        paymentSum={logData ? logData.lastOneHourPaymentSum : null}
+        transactionCount={logData ? logData.paymentCounterHour : null}
+      />
+      <PaymentCard
+        title="Last Day Payment Data"
+        paymentSum={logData ? logData.lastDayPaymentSum : null}
+        transactionCount={logData ? logData.paymentCounterDay : null}
+      />
     </div>
   );
 }
