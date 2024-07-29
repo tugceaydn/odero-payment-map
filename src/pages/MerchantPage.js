@@ -4,7 +4,7 @@ import MerchantTable from "../components/merchant_table/MerchantTable";
 const MerchantPage = () => {
   return (
     <div>
-      <h1>Merchant Totals</h1>
+      <h1 style={{ padding: "0 64px" }}>Üye İş Yerleri</h1>
       <MerchantTable />
     </div>
   );

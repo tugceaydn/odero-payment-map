@@ -23,8 +23,10 @@ export default function MerchantTable() {
     ws.current.onopen = () => {
       console.log("WebSocket connection opened");
     };
+
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("table data ", data);
       setMerchantTotals(data);
     };
 
@@ -46,8 +48,8 @@ export default function MerchantTable() {
       <Table aria-label="simple table" className="table">
         <TableHead>
           <TableRow>
-            <TableCell>Merchant</TableCell>
-            <TableCell align="right">Total Amount</TableCell>
+            <TableCell>Üye İş Yeri</TableCell>
+            <TableCell align="right">Toplam Ödeme Tutarı</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
