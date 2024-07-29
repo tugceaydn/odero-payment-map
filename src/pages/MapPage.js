@@ -10,7 +10,7 @@ export default function MapPage() {
   const ws = useRef(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8080/data"); // Change to your WebSocket URL
+    ws.current = new WebSocket("ws://localhost:8080/data");
 
     ws.current.onopen = () => {
       console.log("WebSocket connection opened");
@@ -18,7 +18,7 @@ export default function MapPage() {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      // console.log("Received data:", data);
+      console.log("Received data: ", data);
 
       const {
         lastDayPaymentSum,
@@ -47,8 +47,8 @@ export default function MapPage() {
       });
     };
 
-    ws.current.onclose = () => {
-      console.log("WebSocket connection closed");
+    ws.current.onclose = (event) => {
+      console.log("WebSocket connection closed", event);
     };
 
     ws.current.onerror = (error) => {

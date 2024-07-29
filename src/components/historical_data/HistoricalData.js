@@ -9,10 +9,10 @@ const PaymentCard = ({ title, paymentSum, transactionCount }) => (
         {title}
       </Typography>
       <Typography variant="body1" color="text.secondary">
-        Payment Sum: {paymentSum ? `${paymentSum.toFixed(2)} ₺` : ""}
+        Toplam Ödeme Tutarı: {paymentSum ? `${paymentSum.toFixed(2)} ₺` : ""}
       </Typography>
       <Typography variant="body1" color="text.secondary">
-        Number of Transactions: {transactionCount}
+        İşlem Sayısı: {transactionCount}
       </Typography>
     </CardContent>
   </Card>
