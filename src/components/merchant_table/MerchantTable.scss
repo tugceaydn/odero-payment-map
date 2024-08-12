@@ -1,8 +1,66 @@
-.container {
-  display: flex;
-  justify-content: center;
-
-  .table {
-    width: 80%;
+.table-container {
+    display: flex;
+    justify-content: center;
+  
+    .table {
+      width: 80%;
+      border-collapse: collapse;
+  
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+      }
+  
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+  
+      tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+  
+      tbody tr:hover {
+        background-color: #f1f1f1;
+      }
+  
+      .collapsible-header {
+        background-color: #e0e0e0;
+        font-size: 0.9em;
+        border-top: 2px solid #ccc;
+        text-align: left; // Align to left
+        padding-left: 16px; // Add some padding to align text properly
+      }
+  
+      .collapsible-content {
+        background-color: #f7f7f7;
+        font-size: 0.9em;
+        border-top: none;
+      }
+  
+      // Smooth corners
+      th:first-child, td:first-child {
+        border-left: none;
+      }
+  
+      th:last-child, td:last-child {
+        border-right: none;
+      }
+  
+      tr:first-child th {
+        border-top: none;
+      }
+  
+      tr:last-child td {
+        border-bottom: none;
+      }
+    }
+  
+    .icon-cell {
+      width: 40px; // Make the place for the arrow smaller
+      padding: 0;
+      text-align: center;
+    }
   }
-}
+  

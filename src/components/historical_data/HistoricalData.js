@@ -9,10 +9,10 @@ const PaymentCard = ({ title, paymentSum, transactionCount }) => (
         {title}
       </Typography>
       <Typography variant="body1" color="text.secondary">
-        Payment Sum: {paymentSum ? `${paymentSum.toFixed(2)} ₺` : ""}
+        İşlem Hacmi: {paymentSum ? `${paymentSum.toFixed(2)} ₺` : ""}
       </Typography>
       <Typography variant="body1" color="text.secondary">
-        Number of Transactions: {transactionCount}
+        İşlem Sayısı: {transactionCount}
       </Typography>
     </CardContent>
   </Card>
@@ -42,12 +42,12 @@ export default function HistoricalData({ logData }) {
         </p>
       </div> */}
       <PaymentCard
-        title="Last Hour Payment Data"
+        title="Son 1 saat"
         paymentSum={logData ? logData.lastOneHourPaymentSum : null}
         transactionCount={logData ? logData.paymentCounterHour : null}
       />
       <PaymentCard
-        title="Last Day Payment Data"
+        title="Son 1 gün"
         paymentSum={logData ? logData.lastDayPaymentSum : null}
         transactionCount={logData ? logData.paymentCounterDay : null}
       />

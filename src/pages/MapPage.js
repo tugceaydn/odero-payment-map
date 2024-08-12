@@ -18,7 +18,7 @@ export default function MapPage() {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      // console.log("Received data:", data);
+      console.log("Received data:", data);
 
       const {
         lastDayPaymentSum,
