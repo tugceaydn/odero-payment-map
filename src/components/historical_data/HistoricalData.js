@@ -13,6 +13,7 @@ const PaymentCard = ({ title, paymentSum, transactionCount }) => (
       </Typography>
       <Typography variant="body1" color="text.secondary">
         İşlem Sayısı: {transactionCount}
+        İşlem Sayısı: {transactionCount}
       </Typography>
     </CardContent>
   </Card>

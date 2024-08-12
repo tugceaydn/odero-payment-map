@@ -24,6 +24,7 @@ export default function MerchantTable() {
     //   ws.current.send('Initial request for data');
     };
 
+
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log('Received data:', data);
